@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Peas Of Mind 🌱</title>
+<style>
+  :root{
+    --bg1:#e7f6ee; --bg2:#f3edfb; --bg3:#ffeee2;
+    --card:#ffffff; --ink:#3a3250; --ink2:#8a819e;
+    --mint:#d9f2e6; --peach:#ffe5d4; --lav:#ece4f7; --lemon:#fff6d6; --pink:#ffdbe7;
+    --accent:#5fbf95; --accent-dk:#3f9e75; --accent2:#f07f9c; --purple:#a78fda;
+    --yellow:#f7d269; --danger:#e57373; --darkpill:#332b4a;
+    --shadow:0 6px 18px rgba(120,110,160,.14);
+    --bord:2px solid rgba(58,50,80,.18);
+  }
+  body.dark{
+    --bg1:#241f33; --bg2:#2a2440; --bg3:#2e2547;
+    --card:#332b4a; --ink:#f0ecf8; --ink2:#a99fc0;
+    --mint:#2f4a3f; --peach:#4a3a34; --lav:#3c3454; --lemon:#4a4430; --pink:#4a3340;
+    --accent:#6fd0a5; --accent-dk:#4aa883; --darkpill:#1c1730;
+    --shadow:0 6px 18px rgba(0,0,0,.35);
+    --bord:2px solid rgba(240,236,248,.18);
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  html{font-size:15px;}
+  body{
+    font-family:"Comic Sans MS","Segoe UI",sans-serif;
+    background:linear-gradient(160deg,var(--bg1) 0%,var(--bg2) 45%,var(--bg3) 100%);
+    color:var(--ink); min-height:100vh;
+    padding-bottom:calc(84px + env(safe-area-inset-bottom));
+    transition:background .3s, color .3s;
+  }
+  /* ---------- header with avatar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:40;
+    background:color-mix(in srgb, var(--card) 88%, transparent);
+    backdrop-filter:blur(8px);
+    text-align:center; padding:10px 16px 8px;
+    border-radius:0 0 26px 26px; box-shadow:var(--shadow);
+  }
+  .avatar-wrap{display:flex; justify-content:center; margin-bottom:4px;}
+  .avatar{
+    width:74px; height:74px; border-radius:50%; overflow:hidden;
+    background:var(--peach); border:4px solid var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    font-size:2rem; cursor:pointer; box-shadow:var(--shadow);
+  }
+  .avatar img{width:100%; height:100%; object-fit:cover;}
+  .topbar h1{font-size:1.45rem; font-weight:800;}
+  .topbar p{color:var(--ink2); font-weight:600; font-size:.92rem;}
+
+  main{max-width:520px; margin:0 auto; padding:14px 14px 8px;}
+  .tab-page{display:none; animation:pop .25s ease;}
+  .tab-page.show{display:block;}
+  @keyframes pop{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+
+  .card{
+    background:var(--card); border-radius:22px; padding:16px;
+    margin:12px 0; box-shadow:var(--shadow); border:var(--bord);
+  }
+  .card h2{font-size:1.25rem; margin-bottom:2px;}
+  .card h3{font-size:1.05rem;}
+  .sub{color:var(--ink2); font-size:.85rem; font-weight:600; margin-bottom:12px;}
+
+  .chiprow{display:flex; gap:8px; flex-wrap:wrap;}
+  .chip{background:var(--mint); border-radius:999px; padding:5px 12px; font-size:.8rem; font-weight:700;}
+  .chip.pink{background:var(--pink);} .chip.lav{background:var(--lav);}
+  .chip.lemon{background:var(--lemon);}
+
+  .stat-row{display:flex; gap:10px;}
+  .stat-row .card{flex:1; margin:0; padding:12px; text-align:center;}
+  .stat-num{font-size:1.4rem; font-weight:800;}
+  .stat-lbl{font-size:.72rem; color:var(--ink2); font-weight:700;}
+
+  .bar{background:var(--lav); border-radius:999px; height:20px; overflow:hidden; margin-top:8px; border:var(--bord);}
+  .bar-fill{
+    height:100%; width:0%; border-radius:999px;
+    background:linear-gradient(90deg,var(--accent),var(--yellow));
+    transition:width .5s ease; color:#fff; font-size:.7rem; font-weight:800;
+    display:flex; align-items:center; justify-content:flex-end; padding-right:8px;
+  }
+
+  .notice{
+    background:var(--lemon); border:3px dashed var(--yellow); border-radius:18px;
+    padding:12px 14px; font-size:.85rem; font-weight:700; margin:12px 0;
+  }
+  .notice.peach{background:var(--peach); border-color:var(--accent2);}
+  .tiny-note{font-size:.72rem; color:var(--ink2); font-weight:600;}
+
+  /* meal cards */
+  .meal-card{
+    background:var(--lemon); border-radius:18px; padding:12px; margin-bottom:10px;
+    display:flex; gap:10px; align-items:flex-start; border:var(--bord);
+  }
+  .meal-photo{
+    width:46px; height:46px; border-radius:14px; background:var(--peach);
+    display:flex; align-items:center; justify-content:center; font-size:1.2rem;
+    flex-shrink:0; border:2px solid var(--card); overflow:hidden;
+  }
+  .meal-photo img{width:100%; height:100%; object-fit:cover;}
+  .meal-body{flex:1; min-width:0;}
+  .meal-time{font-weight:800; color:var(--accent2); font-size:.85rem;}
+  .meal-date{color:var(--ink2); font-size:.72rem; font-weight:700;}
+  .food-tags{display:flex; flex-wrap:wrap; gap:5px; margin-top:6px;}
+  .ftag{background:var(--card); border-radius:999px; padding:3px 10px; font-size:.72rem; font-weight:700;}
+  .ftag.r-loved{background:var(--mint);} .ftag.r-bad{background:#ffd6d6;}
+  .ftag.r-okay{background:var(--lemon);} .ftag.r-other{background:var(--lav);}
+  .detail{font-size:.68rem; color:var(--ink2); font-weight:600; margin-top:4px;}
+
+  button{cursor:pointer; font-family:inherit; font-weight:700; border:none; border-radius:999px; color:inherit;}
+  .btn{background:var(--accent); color:#fff; padding:10px 20px; font-size:.95rem; box-shadow:0 4px 0 var(--accent-dk);}
+  .btn:active{transform:translateY(2px); box-shadow:0 2px 0 var(--accent-dk);}
+  .btn.small{padding:5px 12px; font-size:.75rem; background:var(--purple); box-shadow:0 3px 0 #7d63b3;}
+  .btn.pink{background:var(--accent2); box-shadow:0 3px 0 #c76783;}
+  .btn.dark{background:var(--darkpill); color:#fff; box-shadow:0 4px 0 rgba(0,0,0,.3);}
+  .btn.ghost{background:var(--lav); color:var(--ink); box-shadow:none;}
+  .link-btn{background:none; color:var(--purple); text-decoration:underline; font-size:.8rem; padding:4px 0;}
+
+  .fab{
+    position:fixed; right:16px; bottom:calc(100px + env(safe-area-inset-bottom));
+    background:var(--darkpill); color:#fff; border-radius:999px;
+    padding:14px 22px; font-size:1rem; font-weight:800;
+    box-shadow:0 6px 16px rgba(0,0,0,.35); z-index:45;
+  }
+  .fab:active{transform:translateY(2px);}
+
+  nav{
+    position:fixed; left:0; right:0; bottom:0; z-index:50;
+    background:color-mix(in srgb, var(--card) 94%, transparent);
+    backdrop-filter:blur(10px);
+    border-radius:24px 24px 0 0; box-shadow:0 -6px 20px rgba(120,110,160,.18);
+    display:flex; padding:8px 4px calc(8px + env(safe-area-inset-bottom));
+  }
+  nav button{
+    flex:1; background:none; font-size:.68rem; font-weight:800; color:var(--ink2);
+    display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 0;
+    border-radius:14px;
+  }
+  nav button .ico{font-size:1.25rem;}
+  nav button.on{color:var(--ink); background:var(--mint);}
+
+  .search{
+    width:100%; padding:11px 16px; border-radius:999px; border:2px solid var(--lav);
+    font-family:inherit; font-size:.95rem; background:var(--card); color:var(--ink);
+    outline:none; margin-bottom:10px;
+  }
+  .cat-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px;}
+  .cat{background:var(--lav); border-radius:999px; padding:7px 16px; font-size:.82rem; font-weight:800; border:2px solid transparent;}
+  .cat.on{background:var(--darkpill); color:#fff;}
+
+  .food-row{
+    display:flex; align-items:center; gap:10px; background:var(--card);
+    border-radius:16px; padding:10px 14px; margin-bottom:8px; box-shadow:var(--shadow); border:var(--bord);
+  }
+  .food-row .ico{font-size:1.3rem;}
+  .food-row .nm{flex:1; font-weight:700; font-size:.9rem;}
+  .food-row .tags{display:flex; gap:5px; flex-wrap:wrap;}
+
+  /* grocery */
+  .grocery-item{
+    display:flex; align-items:center; gap:10px; background:var(--card);
+    border-radius:14px; padding:9px 12px; margin-bottom:7px; font-weight:700;
+    font-size:.85rem; cursor:pointer; border:var(--bord);
+  }
+  .grocery-item input{width:18px; height:18px; accent-color:var(--accent2); flex-shrink:0;}
+  .grocery-item.done{opacity:.5; text-decoration:line-through;}
+  .add-item-row{display:flex; gap:8px; margin-top:10px;}
+  .add-item-row input{
+    flex:1; padding:10px 14px; border-radius:14px; border:2px solid var(--lav);
+    font-family:inherit; font-size:.9rem; background:var(--lav); color:var(--ink); outline:none;
+  }
+
+  /* modal */
+  .modal-back{
+    position:fixed; inset:0; background:rgba(40,32,60,.55);
+    display:none; align-items:flex-end; justify-content:center; z-index:60;
+  }
+  .modal-back.open{display:flex;}
+  .modal{
+    background:var(--card); border-radius:26px 26px 0 0; max-width:520px; width:100%;
+    max-height:90vh; overflow-y:auto; padding:20px 18px calc(24px + env(safe-area-inset-bottom));
+    animation:up .25s ease;
+  }
+  @keyframes up{from{transform:translateY(40px); opacity:.4;} to{transform:none; opacity:1;}}
+  .modal h3{margin-bottom:12px; font-size:1.15rem;}
+  .field{margin-bottom:12px;}
+  .field > label{display:block; font-weight:800; font-size:.85rem; margin-bottom:6px;}
+  .two-col{display:flex; gap:10px;}
+  .two-col .field{flex:1;}
+  input[type=time], input[type=date], input[type=text], textarea{
+    width:100%; padding:10px 14px; border-radius:14px; border:2px solid var(--lav);
+    font-family:inherit; font-size:1rem; background:var(--lav); color:var(--ink); outline:none;
+  }
+  textarea{resize:vertical; min-height:60px;}
+  .pickgrid{display:flex; flex-wrap:wrap; gap:6px;}
+  .pick{background:var(--lav); border-radius:999px; padding:7px 14px; font-size:.82rem; font-weight:700; border:2px solid transparent;}
+  .pick.on{background:var(--darkpill); color:#fff;}
+  .pick.r{background:var(--lemon);}
+  .pick.r.on{background:var(--darkpill); color:#fff;}
+  .pick.blue{background:var(--lav);}
+  .pick.peachp{background:var(--peach);}
+  .pick.pinkp{background:var(--pink);}
+  .food-age-note{
+    background:var(--lemon); border-radius:12px; padding:8px 12px;
+    font-size:.75rem; font-weight:600; margin-top:8px; border:var(--bord);
+  }
+
+  /* photo picker */
+  .photo-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .photo-prev{
+    width:64px; height:64px; border-radius:16px; background:var(--peach);
+    display:flex; align-items:center; justify-content:center; font-size:1.6rem;
+    border:2px solid var(--lav); overflow:hidden; flex-shrink:0;
+  }
+  .photo-prev img{width:100%; height:100%; object-fit:cover;}
+
+  /* badges */
+  .badge-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+  .badge{
+    border-radius:18px; padding:12px 6px; font-weight:700; font-size:.72rem;
+    background:var(--lav); color:var(--ink2); display:flex; flex-direction:column;
+    align-items:center; gap:4px; text-align:center; border:var(--bord);
+    filter:grayscale(1); opacity:.75;
+  }
+  .badge .ico{font-size:1.5rem;}
+  .badge.won{background:var(--yellow); color:var(--ink); filter:none; opacity:1;}
+
+  .loved-chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .loved-chips .chip{border:var(--bord);}
+
+  /* settings rows */
+  .set-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:2px dashed var(--lav); flex-wrap:wrap;}
+  .set-row:last-child{border-bottom:none;}
+  .set-row .lbl{font-weight:800; font-size:.9rem;}
+  select{
+    font-family:inherit; font-weight:700; font-size:.85rem; padding:7px 12px;
+    border-radius:999px; border:2px solid var(--lav); background:var(--card); color:var(--ink);
+  }
+  .pf-field{margin-bottom:10px;}
+  .pf-field label{display:block; font-weight:700; font-size:.78rem; margin-bottom:4px;}
+  .pf-field input{width:100%;}
+
+  /* week day rows */
+  .day-row{display:flex; align-items:flex-start; gap:10px; padding:9px 0; border-bottom:2px dashed var(--lav);}
+  .day-row:last-child{border-bottom:none;}
+  .day-name{font-weight:800; width:44px; font-size:.85rem;}
+  .day-meals{flex:1; font-size:.8rem; font-weight:600; color:var(--ink2);}
+
+  /* recipe cards */
+  .recipe-card{
+    background:var(--card); border-radius:20px; padding:14px; margin-bottom:12px;
+    box-shadow:var(--shadow); border:var(--bord);
+  }
+  .recipe-head{display:flex; gap:12px; align-items:center;}
+  .recipe-letter{
+    width:46px; height:46px; border-radius:50%; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.2rem; font-weight:800; border:2px solid rgba(58,50,80,.15);
+  }
+  .recipe-title{font-weight:800; font-size:1rem;}
+  .recipe-meta{font-size:.8rem; color:var(--ink2); font-weight:600;}
+  .wait-pill{
+    display:inline-block; background:var(--lemon); border-radius:999px;
+    padding:4px 12px; font-size:.72rem; font-weight:800; margin-top:8px; border:var(--bord);
+  }
+  .ing-toggle{
+    background:none; color:var(--purple); font-weight:800; font-size:.9rem;
+    padding:10px 0 4px; text-align:left; width:100%;
+  }
+  .ing-body{padding:4px 0 0 4px;}
+  .ing-body ul{padding-left:20px; font-size:.85rem; line-height:1.7;}
+  .ing-body ol{padding-left:20px; font-size:.85rem; line-height:1.7; margin-top:6px;}
+
+  /* profile card on log */
+  .profile-flex{display:flex; gap:12px; align-items:center;}
+  .profile-flex .avatar{width:64px; height:64px; font-size:1.7rem; cursor:default;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="avatar-wrap">
+    <div class="avatar" id="topAvatar" title="Baby profile">👶</div>
+  </div>
+  <h1>🌱 <span data-i18n="appName">Peas Of Mind</span></h1>
+  <p id="logTopic"></p>
+</div>
+
+<main>
+
+  <!-- ============ LOG TAB ============ -->
+  <div class="tab-page" id="page-log">
+
+    <div class="card">
+      <div class="profile-flex">
+        <div class="avatar" id="cardAvatar">👶</div>
+        <div style="flex:1;">
+          <h3 id="pfNameLabel">Haifa</h3>
+          <div class="chiprow" style="margin-top:6px;">
+            <span class="chip lav" id="pfBirthChip">🎂 14 May 2025</span>
+            <span class="chip lemon" id="pfAgeChip">👶 6 months 4 days</span>
+          </div>
+        </div>
+        <button class="btn small" id="editProfileBtn">✏️</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="chiprow">
+        <span class="chip lav" data-i18n="foodsTriedLabel">🌾 Foods tried</span>
+        <span class="chip" id="trialChip">0 of 100</span>
+      </div>
+      <div class="bar"><div class="bar-fill" id="barFill">0/100</div></div>
+    </div>
+
+    <div class="stat-row">
+      <div class="card"><div class="stat-num" id="allergenTried">0</div><div class="stat-lbl" data-i18n="allergensTried">allergens tried</div></div>
+      <div class="card"><div class="stat-num" id="lovedCount">0</div><div class="stat-lbl" data-i18n="lovedFoods">loved foods</div></div>
+    </div>
+
+    <div class="notice peach" id="allergenNext"></div>
+
+    <div id="mealList"></div>
+  </div>
+
+  <!-- ============ WEEK TAB ============ -->
+  <div class="tab-page" id="page-week">
+    <div class="card">
+      <h2 data-i18n="weekTitle">📅 This Week</h2>
+      <p class="sub" data-i18n="weekSub">What baby ate over the last 7 days</p>
+      <div class="stat-row">
+        <div class="card"><div class="stat-num" id="wkMeals">0</div><div class="stat-lbl" data-i18n="wkMealsLbl">meals</div></div>
+        <div class="card"><div class="stat-num" id="wkFoods">0</div><div class="stat-lbl" data-i18n="wkFoodsLbl">different foods</div></div>
+      </div>
+      <div class="stat-row" style="margin-top:10px;">
+        <div class="card"><div class="stat-num" id="wkAllergens">0</div><div class="stat-lbl" data-i18n="wkAllergensLbl">allergens</div></div>
+        <div class="card"><div class="stat-num" id="wkFlagged">0</div><div class="stat-lbl" data-i18n="wkFlaggedLbl">reactions flagged</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 data-i18n="dayByDay">Day by day</h3>
+      <div id="weekDays"></div>
+    </div>
+  </div>
+
+  <!-- ============ FOODS TAB ============ -->
+  <div class="tab-page" id="page-foods">
+    <div class="notice" data-i18n="honeyWarning">⚠️ No honey before 12 months. Match textures to your baby's stage to reduce choking risk.</div>
+
+    <div class="card" style="display:flex; align-items:center; gap:12px;">
+      <span style="font-size:1.6rem;">🥕</span>
+      <div style="flex:1;">
+        <h3 data-i18n="addFoodTitle">Add a food</h3>
+        <p class="tiny-note" data-i18n="addFoodSub">Introduce something new to baby's menu</p>
+      </div>
+      <button class="btn small" id="addFoodBtn" data-i18n="addFoodBtn">＋ Add</button>
+    </div>
+
+    <input type="text" class="search" id="foodSearch" placeholder="🔍 Search food name…" data-i18n-ph="searchPh">
+    <div class="cat-row" id="catRow">
+      <button class="cat on" data-cat="all" data-i18n="catAll">All</button>
+      <button class="cat" data-cat="allergens" data-i18n="catAllergens">Allergens</button>
+      <button class="cat" data-cat="favourites" data-i18n="catFav">Favourites</button>
+    </div>
+    <div id="foodList"></div>
+  </div>
+
+  <!-- ============ RECIPES TAB ============ -->
+  <div class="tab-page" id="page-recipes">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:0 4px;">
+      <h2 data-i18n="recipesTitle">🥣 Recipes</h2>
+      <span class="chip lemon" id="dayPill">Day 1</span>
+    </div>
+    <p class="sub" style="padding:0 4px;" data-i18n="recipesSub">Simple ideas to try together.</p>
+    <div id="recipeList"></div>
+  </div>
+
+  <!-- ============ MORE TAB ============ -->
+  <div class="tab-page" id="page-more">
+    <div class="card">
+      <h2 data-i18n="moreTitle">⚙️ More</h2>
+      <p class="sub" data-i18n="moreSub">Profile, badges & tools.</p>
+      <div class="set-row">
+        <span class="lbl" data-i18n="appearance">🎨 Appearance</span>
+        <select id="themeSel">
+          <option value="auto" data-i18n="themeAuto">Auto</option>
+          <option value="light" data-i18n="themeLight">Light</option>
+          <option value="dark" data-i18n="themeDark">Dark</option>
+        </select>
+      </div>
+      <div class="set-row">
+        <span class="lbl" data-i18n="language">🗣️ Language</span>
+        <select id="langSel">
+          <option value="en">English</option>
+          <option value="ms">Bahasa Melayu</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 data-i18n="badgesTitle">🏅 Sticker badges</h3>
+      <div class="badge-grid" id="badgeGrid"></div>
+    </div>
+
+    <div class="card">
+      <h3 id="lovedTitle">❤️ Top loved foods</h3>
+      <p class="tiny-note" style="margin-bottom:8px;" data-i18n="lovedHint">Log meals marked “Loved it” to see favourites here.</p>
+      <div class="loved-chips" id="lovedChips"></div>
+    </div>
+
+    <div class="card">
+      <h3 data-i18n="groceryTitle">🛒 Grocery list</h3>
+      <p class="tiny-note" id="gEmptyHint" style="margin-bottom:8px;" data-i18n="groceryEmpty">Empty. Add ingredients from any recipe.</p>
+      <div id="groceryList"></div>
+      <div id="clearRow" style="display:none; text-align:center;">
+        <button class="link-btn" id="clearChecked" data-i18n="clearChecked">Clear checked items</button>
+      </div>
+      <div class="add-item-row">
+        <input type="text" id="newGroceryItem" placeholder="Add an item" data-i18n-ph="addItemPh">
+        <button class="btn dark" id="addGroceryBtn" data-i18n="addBtn">Add</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="tiny-note">Peas Of Mind — sample demo app. Nothing is saved between visits. 💚</p>
+    </div>
+  </div>
+
+</main>
+
+<button class="fab" id="fabBtn">＋ <span data-i18n="logMeal">Log a meal</span></button>
+
+<nav id="nav">
+  <button data-tab="log" class="on"><span class="ico">📖</span><span data-i18n="navLog">Log</span></button>
+  <button data-tab="week"><span class="ico">📅</span><span data-i18n="navWeek">Week</span></button>
+  <button data-tab="foods"><span class="ico">🥕</span><span data-i18n="navFoods">Foods</span></button>
+  <button data-tab="recipes"><span class="ico">🥣</span><span data-i18n="navRecipes">Recipes</span></button>
+  <button data-tab="more"><span class="ico">⚙️</span><span data-i18n="navMore">More</span></button>
+</nav>
+
+<!-- ============ PROFILE MODAL ============ -->
+<div class="modal-back" id="profileModal">
+  <div class="modal">
+    <h3 data-i18n="babyProfile">👶 Baby profile</h3>
+    <div class="field">
+      <label data-i18n="pfPhoto">Baby photo</label>
+      <div class="photo-row">
+        <div class="photo-prev" id="profilePhotoPrev">👶</div>
+        <div style="flex:1;">
+          <button class="btn small" id="pickPhotoBtn" data-i18n="choosePhoto">📷 Choose photo</button>
+          <button class="btn small ghost" id="pickEmojiBtn" data-i18n="chooseEmoji">🎨 Or emoji</button>
+        </div>
+      </div>
+      <input type="file" id="photoInput" accept="image/*" style="display:none;">
+      <div class="pickgrid" id="emojiPicks" style="margin-top:8px; display:none;"></div>
+      <p class="tiny-note" style="margin-top:6px;" data-i18n="photoNote">Photos stay on this page only — nothing is uploaded or saved.</p>
+    </div>
+    <div class="field">
+      <label data-i18n="pfName">Name</label>
+      <input type="text" id="pfNameInput">
+    </div>
+    <div class="field">
+      <label data-i18n="pfBirth">Birthday</label>
+      <input type="date" id="pfBirthInput">
+      <p class="tiny-note" style="margin-top:5px;" data-i18n="birthHint">With a birthday, age updates by itself.</p>
+    </div>
+    <div class="field">
+      <label data-i18n="pfAge">Current age</label>
+      <input type="text" id="pfAgeInput" readonly>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close="profileModal" data-i18n="cancel">Cancel</button>
+      <button class="btn pink" id="profileSave" data-i18n="save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MEAL MODAL ============ -->
+<div class="modal-back" id="mealModal">
+  <div class="modal">
+    <h3 id="mealModalTitle">Log a Meal</h3>
+    <div class="two-col">
+      <div class="field">
+        <label>📅 <span data-i18n="mealDate">Date</span></label>
+        <input type="date" id="mealDate">
+      </div>
+      <div class="field">
+        <label>🕒 <span data-i18n="mealTime">Time</span></label>
+        <input type="time" id="mealTime">
+      </div>
+    </div>
+    <div class="field">
+      <label>🥄 <span data-i18n="foodsInMeal">What was in this meal? Tap all that apply</span></label>
+      <div class="pickgrid" id="foodPicks"></div>
+      <div id="foodAgeNotes"></div>
+    </div>
+    <div class="field">
+      <label>🍳 <span data-i18n="cookingMethod">Cooking method</span></label>
+      <div class="pickgrid" id="cookPicks"></div>
+    </div>
+    <div class="field">
+      <label>🥄 <span data-i18n="texture">Texture</span></label>
+      <div class="pickgrid" id="texturePicks"></div>
+    </div>
+    <div class="field">
+      <label>🍲 <span data-i18n="flavoring">Flavoring</span></label>
+      <div class="pickgrid" id="flavorPicks"></div>
+      <input type="text" id="flavorOther" placeholder="✏️ Type your own…" style="margin-top:8px; display:none;">
+    </div>
+    <p class="tiny-note" style="margin:-4px 0 12px;" data-i18n="saltNote">Skip added sugar and salt before 12 months.</p>
+    <div class="field">
+      <label>💗 <span data-i18n="reactionQ">How did it go?</span></label>
+      <div class="pickgrid" id="reactionPicks"></div>
+    </div>
+    <div class="field">
+      <label>📷 <span data-i18n="mealPhoto">Photo of baby or meal</span></label>
+      <div class="photo-row">
+        <div class="photo-prev" id="mealPhotoPrev">📸</div>
+        <div style="flex:1;">
+          <button class="btn small" id="mealPhotoBtn" data-i18n="choosePhoto">📷 Choose photo</button>
+          <button class="btn small ghost" id="mealEmojiBtn" data-i18n="chooseEmoji">🎨 Or emoji</button>
+        </div>
+      </div>
+      <input type="file" id="mealPhotoInput" accept="image/*" style="display:none;">
+      <div class="pickgrid" id="mealEmojiPicks" style="margin-top:8px; display:none;"></div>
+    </div>
+    <div class="field">
+      <label>📝 <span data-i18n="notes">Notes (optional)</span></label>
+      <textarea id="mealNotes"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close="mealModal" data-i18n="cancel">Cancel</button>
+      <button class="btn pink" id="mealSave" data-i18n="save">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ADD FOOD MODAL ============ -->
+<div class="modal-back" id="foodModal">
+  <div class="modal">
+    <h3 data-i18n="addFoodTitle">Add a food</h3>
+    <div class="field">
+      <label data-i18n="foodNameLbl">Food name</label>
+      <input type="text" id="newFoodName" placeholder="e.g. Quinoa">
+    </div>
+    <div class="field">
+      <label data-i18n="foodAllergenLbl">Is it a common allergen?</label>
+      <div class="pickgrid" id="newFoodAllergenPicks"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close="foodModal" data-i18n="cancel">Cancel</button>
+      <button class="btn pink" id="foodSave" data-i18n="save">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ================= data =================
+const ALLERGEN_KINDS = ["Egg","Peanut","Milk","Fish","Soy"];
+const REACTIONS = ["Loved it","Okay","Refused","Rash or hives","Vomiting","Other"];
+const COOK_METHODS = ["Steamed","Air-fried","Pan-fried","Boiled","Baked","Grilled","Raw"];
+const TEXTURES = ["Purée","Mashed","Finger food","Small chunks"];
+const FLAVORS = ["Chicken feet stock","Vegetable stock","Beef bone broth","Mirepoix","Whipped bone marrow","Other"];
+const MEAL_EMOJIS = ["🍲","🍌","🥦","🥣","🍗","🥑","🥚","🐟","🥕","📸"];
+const PROFILE_EMOJIS = ["👶","🍼","👼","🐣","🌸","🧸","🌟","🌞"];
+const BADGES = [
+  {ico:"🥄", name:"First bite", n:1},
+  {ico:"🌱", name:"10 foods", n:10},
+  {ico:"🌈", name:"25 foods", n:25},
+  {ico:"⭐", name:"50 foods", n:50},
+  {ico:"🏅", name:"75 foods", n:75},
+  {ico:"🏆", name:"100 foods", n:100}
+];
+
+let baby = {name:"Haifa", birth:"2025-05-14", photo:null}; // photo = dataURL or emoji
+
+// foods — minAge months powers the yellow "usually introduced from" notes
+let foods = [
+  {name:"Rice", minAge:6, allergen:null},
+  {name:"Avocado", minAge:6, allergen:null},
+  {name:"Banana", minAge:6, allergen:null},
+  {name:"Sweet potato", minAge:6, allergen:null},
+  {name:"Carrot", minAge:6, allergen:null},
+  {name:"Pear", minAge:6, allergen:null},
+  {name:"Oatmeal", minAge:6, allergen:null},
+  {name:"Egg (well cooked)", minAge:6, allergen:"Egg"},
+  {name:"Peanut butter (thinned)", minAge:6, allergen:"Peanut"},
+  {name:"Plain yogurt", minAge:6, allergen:"Milk"},
+  {name:"Salmon", minAge:6, allergen:"Fish"},
+  {name:"Tofu", minAge:6, allergen:"Soy"},
+  {name:"Broccoli", minAge:6, allergen:null},
+  {name:"Chicken", minAge:6, allergen:null},
+  {name:"Pumpkin", minAge:6, allergen:null},
+  {name:"Spinach", minAge:8, allergen:null},
+  {name:"Papaya", minAge:6, allergen:null},
+  {name:"Honey", minAge:12, allergen:null}
+];
+const FOOD_EMOJI = {"Rice":"🍚","Rice porridge":"🥣","Avocado":"🥑","Banana":"🍌","Sweet potato":"🍠","Carrot":"🥕","Pear":"🍐","Oatmeal":"🥣","Egg (well cooked)":"🥚","Peanut butter (thinned)":"🥜","Plain yogurt":"🥛","Salmon":"🐟","Tofu":"🍥","Broccoli":"🥦","Chicken":"🍗","Pumpkin":"🎃","Spinach":"🥬","Papaya":"🥭","Honey":"🍯"};
+
+function todayStr(d){
+  const t = d || new Date();
+  return t.getFullYear()+"-"+String(t.getMonth()+1).padStart(2,"0")+"-"+String(t.getDate()).padStart(2,"0");
+}
+function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return todayStr(d); }
+
+let meals = [
+  {date:daysAgo(0), time:"08:15", foods:["Banana","Avocado"], photo:null, emoji:"🍌",
+   cook:"Raw", texture:"Mashed", flavor:"None", reactions:["Loved it"], notes:""},
+  {date:daysAgo(0), time:"12:30", foods:["Rice","Chicken","Pumpkin"], photo:null, emoji:"🍲",
+   cook:"Boiled", texture:"Purée", flavor:"Vegetable stock", reactions:["Loved it","Okay"], notes:""},
+  {date:daysAgo(2), time:"16:00", foods:["Broccoli","Sweet potato"], photo:null, emoji:"🥦",
+   cook:"Steamed", texture:"Finger food", flavor:"None", reactions:["Refused"], notes:""},
+  {date:daysAgo(4), time:"12:00", foods:["Salmon","Rice"], photo:null, emoji:"🐟",
+   cook:"Steamed", texture:"Purée", flavor:"Mirepoix", reactions:["Rash or hives"], notes:""}
+];
+
+let grocery = [
+  {name:"1 medium sweet potato", done:false},
+  {name:"2 tbsp breast milk, formula or water", done:true}
+];
+
+const RECIPES = [
+  {letter:"S", color:"var(--peach)", name:"Sweet potato mash", age:"From 6 months", minAge:6, time:"20 min",
+   ing:["1 medium sweet potato","2 tbsp breast milk, formula or water"],
+   steps:["Peel and cube the sweet potato.","Steam for 12–15 minutes until very soft.","Mash with the milk or water until smooth.","Cool to warm and test on your wrist."],
+   grocery:["1 medium sweet potato","2 tbsp breast milk, formula or water"]},
+  {letter:"A", color:"var(--lav)", name:"Avocado banana smash", age:"From 6 months", minAge:6, time:"5 min",
+   ing:["½ ripe avocado","1 small banana"],
+   steps:["Mash the avocado and banana with a fork.","Mix until creamy — no cooking needed.","Serve straight away before it browns."],
+   grocery:["½ ripe avocado","1 small banana"]},
+  {letter:"C", color:"var(--mint)", name:"Chicken broccoli rice porridge", age:"From 7 months", minAge:7, time:"25 min",
+   ing:["2 tbsp rice","Shredded chicken","Small broccoli floret"],
+   steps:["Boil rice with extra water until very soft.","Add chicken and broccoli, simmer 10 minutes.","Blend or mash to the right texture for baby."],
+   grocery:["2 tbsp rice","Shredded chicken","Small broccoli floret"]},
+  {letter:"F", color:"var(--pink)", name:"Salmon pumpkin congee", age:"From 8 months", minAge:8, time:"25 min",
+   ing:["Boneless salmon fillet","Rice","Pumpkin cubes"],
+   steps:["Simmer rice until very soft.","Flake in cooked salmon and pumpkin.","Mash well and check for bones before serving."],
+   grocery:["Boneless salmon fillet","Rice","Pumpkin cubes"]}
+];
+
+// ================= i18n =================
+const I18N = {
+  en:{
+    appName:"Peas Of Mind", foodsTriedLabel:"🌾 Foods tried", allergensTried:"allergens tried",
+    lovedFoods:"loved foods", weekTitle:"📅 This Week", weekSub:"What baby ate over the last 7 days",
+    wkMealsLbl:"meals", wkFoodsLbl:"different foods", wkAllergensLbl:"allergens", wkFlaggedLbl:"reactions flagged",
+    dayByDay:"Day by day", honeyWarning:"⚠️ No honey before 12 months. Match textures to your baby's stage to reduce choking risk.",
+    addFoodTitle:"Add a food", addFoodSub:"Introduce something new to baby's menu", addFoodBtn:"＋ Add",
+    searchPh:"🔍 Search food name…", catAll:"All", catAllergens:"Allergens", catFav:"Favourites",
+    recipesTitle:"🥣 Recipes", recipesSub:"Simple ideas to try together.",
+    ingSteps:"Ingredients and steps", addToGrocery:"🛒 Add to grocery list", added:"✓ Added",
+    moreTitle:"⚙️ More", moreSub:"Profile, badges & tools.", appearance:"🎨 Appearance",
+    language:"🗣️ Language", babyProfile:"👶 Baby profile", pfName:"Name", pfBirth:"Birthday",
+    pfAge:"Current age", badgesTitle:"🏅 Sticker badges", groceryTitle:"🛒 Grocery list",
+    groceryEmpty:"Empty. Add ingredients from any recipe.", clearChecked:"Clear checked items",
+    addItemPh:"Add an item", addBtn:"Add", lovedHint:"Log meals marked “Loved it” to see favourites here.",
+    navLog:"Log", navWeek:"Week", navFoods:"Foods", navRecipes:"Recipes", navMore:"More",
+    logMeal:"Log a meal", mealDate:"Date", mealTime:"Time", foodsInMeal:"What was in this meal? Tap all that apply",
+    cookingMethod:"Cooking method", texture:"Texture", flavoring:"Flavoring", reactionQ:"How did it go?",
+    mealPhoto:"Photo of baby or meal", notes:"Notes (optional)", cancel:"Cancel", save:"Save",
+    saltNote:"Skip added sugar and salt before 12 months.",
+    pfPhoto:"Baby photo", choosePhoto:"📷 Choose photo", chooseEmoji:"🎨 Or emoji",
+    photoNote:"Photos stay on this page only — nothing is uploaded or saved.",
+    birthHint:"With a birthday, age updates by itself.",
+    noMealYet:"No meals yet — tap the button above to start!",
+    readyAllergen:"Ready for a new allergen. Haven't tried yet:",
+    tried:"tried", fav:"Favourite", age:"Age",
+    fromAge:"From", months:"months", min:"min",
+    themeAuto:"Auto", themeLight:"Light", themeDark:"Dark",
+    lovedTitle:"❤️ Top loved foods", usuallyFrom:"is usually introduced from"
+  },
+  ms:{
+    appName:"Peas Of Mind", foodsTriedLabel:"🌾 Makanan dicuba", allergensTried:"alergen dicuba",
+    lovedFoods:"makanan disukai", weekTitle:"📅 Minggu Ini", weekSub:"Apa yang bayi makan dalam 7 hari lepas",
+    wkMealsLbl:"makan", wkFoodsLbl:"makanan berbeza", wkAllergensLbl:"alergen", wkFlaggedLbl:"tindak balas dibendera",
+    dayByDay:"Hari demi hari", honeyWarning:"⚠️ Jangan beri madu sebelum 12 bulan. Padankan tekstur dengan peringkat bayi untuk kurangkan risiko tercekik.",
+    addFoodTitle:"Tambah makanan", addFoodSub:"Perkenalkan sesuatu yang baru", addFoodBtn:"＋ Tambah",
+    searchPh:"🔍 Cari nama makanan…", catAll:"Semua", catAllergens:"Alergen", catFav:"Kegemaran",
+    recipesTitle:"🥣 Resipi", recipesSub:"Idea mudah untuk dicuba bersama.",
+    ingSteps:"Bahan-bahan dan cara", addToGrocery:"🛒 Tambah ke senarai", added:"✓ Ditambah",
+    moreTitle:"⚙️ Lagi", moreSub:"Profil, lencana & alat.", appearance:"🎨 Rupa",
+    language:"🗣️ Bahasa", babyProfile:"👶 Profil bayi", pfName:"Nama", pfBirth:"Hari lahir",
+    pfAge:"Umur sekarang", badgesTitle:"🏅 Lencana pelekat", groceryTitle:"🛒 Senarai barang runcit",
+    groceryEmpty:"Kosong. Tambah bahan dari mana-mana resipi.", clearChecked:"Buang item yang dicap",
+    addItemPh:"Tambah item", addBtn:"Tambah", lovedHint:"Log makanan “Disukai” untuk lihat kegemaran di sini.",
+    navLog:"Rekod", navWeek:"Minggu", navFoods:"Makanan", navRecipes:"Resipi", navMore:"Lagi",
+    logMeal:"Rekod hidangan", mealDate:"Tarikh", mealTime:"Waktu", foodsInMeal:"Apa dalam hidangan ini? Pilih semua",
+    cookingMethod:"Cara memasak", texture:"Tekstur", flavoring:"Perisa", reactionQ:"Bagaimana responsnya?",
+    mealPhoto:"Foto bayi atau makanan", notes:"Nota (pilihan)", cancel:"Batal", save:"Simpan",
+    saltNote:"Elakkan gula dan garam tambahan sebelum 12 bulan.",
+    pfPhoto:"Foto bayi", choosePhoto:"📷 Pilih foto", chooseEmoji:"🎨 Atau emoji",
+    photoNote:"Foto kekal di halaman ini sahaja — tiada muat naik atau simpanan.",
+    birthHint:"Dengan hari lahir, umur dikira sendiri.",
+    noMealYet:"Belum ada hidangan. Ketik butang di atas untuk mula!",
+    readyAllergen:"Sedia untuk alergen baharu. Belum dicuba:",
+    tried:"dicuba", fav:"Kegemaran", age:"Umur",
+    fromAge:"Dari", months:"bulan", min:"min",
+    themeAuto:"Auto", themeLight:"Cerah", themeDark:"Gelap",
+    lovedTitle:"❤️ Makanan paling disukai", usuallyFrom:"biasanya diperkenalkan dari"
+  }
+};
+let lang = "en";
+const t = k => (I18N[lang][k] ?? I18N.en[k] ?? k);
+
+function applyI18n(){
+  document.querySelectorAll("[data-i18n]").forEach(el=>el.textContent=t(el.dataset.i18n));
+  document.querySelectorAll("[data-i18n-ph]").forEach(el=>el.placeholder=t(el.dataset.i18nPh));
+  document.documentElement.lang = lang;
+}
+
+// ================= derived stats =================
+function triedFoodNames(){ const s=new Set(); meals.forEach(m=>m.foods.forEach(f=>s.add(f))); return s; }
+function lovedFoodNames(){
+  const s=new Set();
+  meals.forEach(m=>{ if(m.reactions.includes("Loved it")) m.foods.forEach(f=>s.add(f)); });
+  return s;
+}
+function allergensTriedCount(){
+  const tried = triedFoodNames();
+  return new Set(foods.filter(f=>f.allergen && tried.has(f.name)).map(f=>f.allergen)).size;
+}
+// FIX: parse YYYY-MM-DD as local date parts (new Date(str) is UTC and can shift a day)
+function parseLocalDate(s){
+  if(!s) return null;
+  const [y,m,d] = s.split("-").map(Number);
+  return new Date(y, m-1, d);
+}
+function babyAge(){
+  const b = parseLocalDate(baby.birth);
+  if(!b) return "—";
+  const now = new Date();
+  let months = (now.getFullYear()-b.getFullYear())*12 + (now.getMonth()-b.getMonth());
+  if(now.getDate() < b.getDate()) months--;
+  const anchor = new Date(b.getFullYear(), b.getMonth()+months, b.getDate());
+  const days = Math.max(0, Math.round((now-anchor)/86400000));
+  return months + " " + t("months") + " " + days + " days";
+}
+function fmtDate(ds){
+  const d = parseLocalDate(ds);
+  return d ? d.toLocaleDateString(undefined,{weekday:"short", day:"numeric", month:"short"}) : ds;
+}
+
+// ================= Log tab =================
+function renderAvatar(){
+  const html = baby.photo && baby.photo.startsWith("data:")
+    ? `<img src="${baby.photo}" alt="baby">` : (baby.photo || "👶");
+  document.getElementById("topAvatar").innerHTML = html;
+  document.getElementById("cardAvatar").innerHTML = html;
+}
+function renderLog(){
+  document.getElementById("logTopic").textContent = `${baby.name || "Baby"}'s first bites 🥄`;
+  document.getElementById("pfNameLabel").textContent = baby.name || "Baby";
+  const b = parseLocalDate(baby.birth);
+  document.getElementById("pfBirthChip").textContent =
+    "🎂 " + (b ? b.toLocaleDateString(undefined,{day:"numeric", month:"short", year:"numeric"}) : "—");
+  document.getElementById("pfAgeChip").textContent = "👶 " + babyAge();
+
+  const tried = triedFoodNames().size;
+  const pct = Math.min(100, tried);
+  document.getElementById("trialChip").textContent = `${tried} of 100`;
+  const bar = document.getElementById("barFill");
+  bar.style.width = pct+"%";
+  bar.textContent = `${tried}/100`;
+
+  document.getElementById("allergenTried").textContent = allergensTriedCount();
+  document.getElementById("lovedCount").textContent = lovedFoodNames().size;
+
+  const triedNames = triedFoodNames();
+  const notTried = ALLERGEN_KINDS.filter(a=>!foods.some(f=>f.allergen===a && triedNames.has(f.name)));
+  document.getElementById("allergenNext").innerHTML =
+    "⏰ <b>" + t("readyAllergen") + "</b> " + (notTried.length ? notTried.join(", ") : "🎉 All five tried!");
+
+  const list = document.getElementById("mealList");
+  if(!meals.length){
+    list.innerHTML = `<p class="sub" style="text-align:center; padding:20px 0;">🍼 ${t("noMealYet")}</p>`;
+    return;
+  }
+  const sorted = [...meals].sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));
+  list.innerHTML = sorted.map(m=>{
+    const idx = meals.indexOf(m);
+    const photoHtml = m.photo ? `<img src="${m.photo}" alt="meal">` : (m.emoji || "📸");
+    const fts = m.foods.map(f=>`<span class="ftag">${FOOD_EMOJI[f]||"🍽️"} ${f}</span>`).join("");
+    const rts = m.reactions.map(r=>{
+      const cls = r==="Loved it"?"r-loved":r==="Okay"?"r-okay":r==="Other"?"r-other":"r-bad";
+      return `<span class="ftag ${cls}">${r}</span>`;
+    }).join("");
+    const dts = [
+      m.cook ? "🍳 "+m.cook : "",
+      m.texture ? "🥄 "+m.texture : "",
+      m.flavor && m.flavor!=="None" ? "🍲 "+m.flavor : ""
+    ].filter(Boolean).map(x=>`<span class="ftag r-other">${x}</span>`).join("");
+    return `<div class="meal-card">
+      <div class="meal-photo">${photoHtml}</div>
+      <div class="meal-body">
+        <div class="meal-time">🕒 ${m.time} <span class="meal-date">· ${fmtDate(m.date)}</span></div>
+        <div class="food-tags">${fts}${rts}</div>
+        ${dts?`<div class="food-tags">${dts}</div>`:""}
+        ${m.notes?`<div class="detail">📝 ${m.notes}</div>`:""}
+      </div>
+      <div style="display:flex; flex-direction:column; gap:5px;">
+        <button class="btn small" onclick="openMealModal(${idx})">✏️</button>
+        <button class="btn small" style="background:var(--danger); box-shadow:0 3px 0 #b94f4f;" onclick="deleteMeal(${idx})">🗑</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ================= Week tab =================
+function renderWeek(){
+  const weekMeals = meals.filter(m=>m.date>=daysAgo(6));
+  const foodSet = new Set(), allergenSet = new Set();
+  let flagged = 0;
+  weekMeals.forEach(m=>{
+    m.foods.forEach(f=>{
+      foodSet.add(f);
+      const fd = foods.find(x=>x.name===f);
+      if(fd && fd.allergen) allergenSet.add(fd.allergen);
+    });
+    m.reactions.forEach(r=>{ if(!["Loved it","Okay"].includes(r)) flagged++; });
+  });
+  document.getElementById("wkMeals").textContent = weekMeals.length;
+  document.getElementById("wkFoods").textContent = foodSet.size;
+  document.getElementById("wkAllergens").textContent = allergenSet.size;
+  document.getElementById("wkFlagged").textContent = flagged;
+
+  const days = [];
+  for(let i=6;i>=0;i--) days.push(daysAgo(i));
+  document.getElementById("weekDays").innerHTML = days.map(ds=>{
+    const dm = meals.filter(m=>m.date===ds);
+    const txt = dm.length
+      ? dm.map(m=>`🕒 ${m.time}: ${m.foods.join(", ")}`).join(" · ")
+      : (lang==="ms" ? "Tiada makanan" : "No meals");
+    return `<div class="day-row"><span class="day-name">${parseLocalDate(ds).toLocaleDateString(undefined,{weekday:"short"})}</span><span class="day-meals">${txt}</span></div>`;
+  }).join("");
+}
+
+// ================= Foods tab =================
+let curCat = "all", searchQ = "";
+function renderFoods(){
+  const tried = triedFoodNames(), loved = lovedFoodNames();
+  const q = searchQ.toLowerCase();
+  const shown = foods.filter(f=>{
+    if(curCat==="allergens" && !f.allergen) return false;
+    if(curCat==="favourites" && !loved.has(f.name)) return false;
+    if(q && !f.name.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  document.getElementById("foodList").innerHTML = shown.map(f=>`
+    <div class="food-row">
+      <span class="ico">${FOOD_EMOJI[f.name]||"🍽️"}</span>
+      <span class="nm">${f.name}</span>
+      <span class="tags">
+        ${tried.has(f.name)?`<span class="chip" style="font-size:.68rem;">✓ ${t("tried")}</span>`:""}
+        ${f.allergen?`<span class="chip pink" style="font-size:.68rem;">⚠️ ${f.allergen}</span>`:""}
+        ${loved.has(f.name)?`<span class="chip lemon" style="font-size:.68rem;">❤️ ${t("fav")}</span>`:""}
+      </span>
+    </div>`).join("") || `<p class="sub" style="text-align:center;">🤔 —</p>`;
+}
+document.getElementById("foodSearch").addEventListener("input", e=>{ searchQ=e.target.value; renderFoods(); });
+document.getElementById("catRow").addEventListener("click", e=>{
+  const b = e.target.closest(".cat"); if(!b) return;
+  curCat = b.dataset.cat;
+  document.querySelectorAll(".cat").forEach(c=>c.classList.toggle("on", c===b));
+  renderFoods();
+});
+
+let newFoodAllergen = null;
+document.getElementById("addFoodBtn").onclick = ()=>{
+  newFoodAllergen = null;
+  renderNewFoodPicks();
+  document.getElementById("newFoodName").value = "";
+  openModal("foodModal");
+};
+function renderNewFoodPicks(){
+  document.getElementById("newFoodAllergenPicks").innerHTML =
+    ALLERGEN_KINDS.map(a=>`<button type="button" class="pick ${newFoodAllergen===a?"on":""}" onclick="setNewAllergen('${a}')">${a}</button>`).join("") +
+    `<button type="button" class="pick ${newFoodAllergen===null?"on":""}" onclick="setNewAllergen(null)">${lang==="ms"?"Bukan alergen":"Not an allergen"}</button>`;
+}
+window.setNewAllergen = a=>{ newFoodAllergen=a; renderNewFoodPicks(); };
+document.getElementById("foodSave").onclick = ()=>{
+  const nm = document.getElementById("newFoodName").value.trim();
+  if(!nm){ alert(lang==="ms"?"Sila isi nama makanan!":"Please enter a food name!"); return; }
+  if(foods.some(f=>f.name.toLowerCase()===nm.toLowerCase())){
+    alert(lang==="ms"?"Makanan itu sudah dalam senarai!":"That food is already in the list!"); return;
+  }
+  foods.push({name:nm, minAge:6, allergen:newFoodAllergen});
+  closeModal("foodModal");
+  renderFoods();
+};
+
+// ================= Recipes tab =================
+function renderRecipes(){
+  document.getElementById("recipeList").innerHTML = RECIPES.map((r,i)=>`
+    <div class="recipe-card">
+      <div class="recipe-head">
+        <div class="recipe-letter" style="background:${r.color};">${r.letter}</div>
+        <div>
+          <div class="recipe-title">${r.name}</div>
+          <div class="recipe-meta">${r.age} · ${r.time} ${t("min")}</div>
+        </div>
+      </div>
+      <span class="wait-pill">⏳ ${t("fromAge")} ${r.minAge} ${t("months")}</span>
+      <button class="ing-toggle" onclick="toggleRecipe(${i})"><span id="tg${i}">▶</span> ${t("ingSteps")}</button>
+      <div class="ing-body" id="ing${i}" style="display:none;">
+        <ul>${r.ing.map(x=>`<li>${x}</li>`).join("")}</ul>
+        <ol>${r.steps.map(x=>`<li>${x}</li>`).join("")}</ol>
+      </div>
+      <button class="btn dark" style="margin-top:10px;" id="rg${i}" onclick="addToGrocery(${i})">${t("addToGrocery")}</button>
+    </div>`).join("");
+  const day = Math.floor((new Date() - parseLocalDate(baby.birth))/(86400000*7)) + 1;
+  document.getElementById("dayPill").textContent = (lang==="ms"?"Hari ":"Day ") + Math.max(1, day);
+}
+window.toggleRecipe = i=>{
+  const body = document.getElementById("ing"+i), tg = document.getElementById("tg"+i);
+  const open = body.style.display !== "none";
+  body.style.display = open ? "none" : "";
+  tg.textContent = open ? "▶" : "▼";
+};
+window.addToGrocery = i=>{
+  RECIPES[i].grocery.forEach(g=>{
+    if(!grocery.some(x=>x.name===g)) grocery.push({name:g, done:false});
+  });
+  renderGrocery();
+  document.getElementById("rg"+i).textContent = t("added");
+};
+
+// ================= Grocery (More tab) =================
+function renderGrocery(){
+  const list = document.getElementById("groceryList");
+  list.innerHTML = grocery.map((g,i)=>`
+    <label class="grocery-item ${g.done?"done":""}">
+      <input type="checkbox" ${g.done?"checked":""} onchange="toggleGrocery(${i})"> ${g.name}
+    </label>`).join("");
+  document.getElementById("clearRow").style.display = grocery.some(g=>g.done) ? "" : "none";
+  document.getElementById("gEmptyHint").style.display = grocery.length ? "none" : "";
+}
+window.toggleGrocery = i=>{ grocery[i].done=!grocery[i].done; renderGrocery(); };
+document.getElementById("addGroceryBtn").onclick = ()=>{
+  const inp = document.getElementById("newGroceryItem");
+  const v = inp.value.trim();
+  if(!v) return;
+  grocery.push({name:v, done:false});
+  inp.value = "";
+  renderGrocery();
+};
+document.getElementById("clearChecked").onclick = ()=>{
+  grocery = grocery.filter(g=>!g.done);
+  renderGrocery();
+};
+
+// ================= More tab =================
+function renderMore(){
+  const tried = triedFoodNames().size;
+  document.getElementById("badgeGrid").innerHTML = BADGES.map(b=>
+    `<span class="badge ${tried>=b.n?"won":""}"><span class="ico">${b.ico}</span>${b.name}</span>`
+  ).join("");
+
+  const loved = [...lovedFoodNames()];
+  document.getElementById("lovedTitle").textContent = t("lovedTitle");
+  document.getElementById("lovedChips").innerHTML = loved.length
+    ? loved.map(f=>`<span class="chip">${FOOD_EMOJI[f]||"🍽️"} ${f}</span>`).join("")
+    : `<p class="tiny-note">—</p>`;
+
+  document.getElementById("themeSel").closest(".set-row").querySelector(".lbl").textContent = t("appearance");
+  document.getElementById("langSel").closest(".set-row").querySelector(".lbl").textContent = t("language");
+}
+
+// ================= theme =================
+function applyTheme(){
+  const mode = document.getElementById("themeSel").value;
+  const dark = mode==="dark" || (mode==="auto" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  document.body.classList.toggle("dark", dark);
+}
+document.getElementById("themeSel").addEventListener("change", applyTheme);
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", applyTheme);
+document.getElementById("langSel").addEventListener("change", e=>{
+  lang = e.target.value;
+  applyI18n(); renderAll();
+});
+
+// ================= profile modal =================
+let draftProfile = null, profileEmojiOpen = false;
+document.getElementById("topAvatar").onclick = openProfile;
+document.getElementById("editProfileBtn").onclick = openProfile;
+function openProfile(){
+  draftProfile = {name:baby.name, birth:baby.birth, photo:baby.photo};
+  profileEmojiOpen = false;
+  document.getElementById("pfNameInput").value = draftProfile.name;
+  document.getElementById("pfBirthInput").value = draftProfile.birth;
+  renderProfilePhoto();
+  updateProfileAge();
+  openModal("profileModal");
+}
+function renderProfilePhoto(){
+  const el = document.getElementById("profilePhotoPrev");
+  el.innerHTML = draftProfile.photo && draftProfile.photo.startsWith("data:")
+    ? `<img src="${draftProfile.photo}" alt="baby">` : (draftProfile.photo || "👶");
+}
+function updateProfileAge(){
+  baby = {...baby, name:document.getElementById("pfNameInput").value.trim()||"Baby", birth:document.getElementById("pfBirthInput").value};
+  document.getElementById("pfAgeInput").value = babyAge();
+}
+document.getElementById("pfBirthInput").addEventListener("input", updateProfileAge);
+document.getElementById("pickPhotoBtn").onclick = ()=>document.getElementById("photoInput").click();
+document.getElementById("photoInput").addEventListener("change", e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const rd = new FileReader();
+  rd.onload = ()=>{ draftProfile.photo = rd.result; profileEmojiOpen = false;
+    document.getElementById("emojiPicks").style.display = "none"; renderProfilePhoto(); };
+  rd.readAsDataURL(file);
+  e.target.value = "";
+});
+document.getElementById("pickEmojiBtn").onclick = ()=>{
+  profileEmojiOpen = !profileEmojiOpen;
+  const box = document.getElementById("emojiPicks");
+  box.style.display = profileEmojiOpen ? "flex" : "none";
+  box.innerHTML = PROFILE_EMOJIS.map(em=>
+    `<button type="button" class="pick ${draftProfile.photo===em?"on":""}" onclick="setProfileEmoji('${em}')">${em}</button>`).join("");
+};
+window.setProfileEmoji = em=>{ draftProfile.photo = em; renderProfilePhoto();
+  document.querySelectorAll("#emojiPicks .pick").forEach(p=>p.classList.toggle("on", p.textContent===em)); };
+document.getElementById("profileSave").onclick = ()=>{
+  baby = {name:document.getElementById("pfNameInput").value.trim()||"Baby",
+          birth:document.getElementById("pfBirthInput").value, photo:draftProfile.photo};
+  closeModal("profileModal");
+  renderAll();
+};
+
+// ================= meal modal =================
+let draft = null, editingIdx = null, mealEmojiOpen = false, flavorOtherOpen = false;
+function openMealModal(idx){
+  editingIdx = idx;
+  const m = idx!=null ? meals[idx] : null;
+  draft = m ? JSON.parse(JSON.stringify(m))
+            : {date:todayStr(), time:defaultTime(), foods:[], photo:null, emoji:"📸",
+               cook:null, texture:null, flavor:null, reactions:[], notes:""};
+  mealEmojiOpen = false; flavorOtherOpen = false;
+  document.getElementById("mealModalTitle").textContent = m ? (lang==="ms"?"Sunting hidangan":"Edit Meal") : t("logMeal");
+  document.getElementById("mealDate").value = draft.date;
+  document.getElementById("mealTime").value = draft.time;
+  document.getElementById("mealNotes").value = draft.notes || "";
+  document.getElementById("flavorOther").style.display = "none";
+  document.getElementById("flavorOther").value = "";
+  renderFoodPicks(); renderCookPicks(); renderTexturePicks(); renderFlavorPicks();
+  renderReactionPicks(); renderMealPhoto();
+  openModal("mealModal");
+}
+window.openMealModal = openMealModal;
+function defaultTime(){
+  const d = new Date();
+  return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+}
+function renderFoodPicks(){
+  document.getElementById("foodPicks").innerHTML = foods.map(f=>
+    `<button type="button" class="pick ${draft.foods.includes(f.name)?"on":""}" onclick="toggleMealFood('${f.name.replace(/'/g,"\\'")}')">${FOOD_EMOJI[f.name]||"🍽️"} ${f.name}</button>`
+  ).join("");
+  renderFoodAgeNotes();
+}
+window.toggleMealFood = nm=>{
+  const i = draft.foods.indexOf(nm);
+  if(i>=0) draft.foods.splice(i,1); else draft.foods.push(nm);
+  renderFoodPicks();
+};
+function renderFoodAgeNotes(){
+  const notes = draft.foods.map(nm=>{
+    const f = foods.find(x=>x.name===nm);
+    return f ? `<div class="food-age-note">🌾 <b>${nm}</b> ${t("usuallyFrom")} ${f.minAge} ${t("months")}.</div>` : "";
+  }).join("");
+  document.getElementById("foodAgeNotes").innerHTML = notes;
+}
+function renderCookPicks(){
+  document.getElementById("cookPicks").innerHTML = COOK_METHODS.map(c=>
+    `<button type="button" class="pick blue ${draft.cook===c?"on":""}" onclick="setDraft('cook','${c}')">${c}</button>`).join("");
+}
+function renderTexturePicks(){
+  document.getElementById("texturePicks").innerHTML = TEXTURES.map(x=>
+    `<button type="button" class="pick peachp ${draft.texture===x?"on":""}" onclick="setDraft('texture','${x}')">${x}</button>`).join("");
+}
+function renderFlavorPicks(){
+  document.getElementById("flavorPicks").innerHTML =
+    FLAVORS.map(f=>{
+      const on = f==="Other" ? flavorOtherOpen || (draft.flavor && !FLAVORS.slice(0,-1).includes(draft.flavor) && draft.flavor!=="None")
+                             : draft.flavor===f;
+      return `<button type="button" class="pick pinkp ${on?"on":""}" onclick="pickFlavor('${f}')">${f}</button>`;
+    }).join("") +
+    `<button type="button" class="pick pinkp ${draft.flavor==="None"?"on":""}" onclick="setDraft('flavor','None');syncFlavorOther();">${lang==="ms"?"Tiada perisa":"No flavoring"}</button>`;
+}
+window.setDraft = (k,v)=>{ draft[k] = draft[k]===v ? null : v;
+  if(k==="flavor") syncFlavorOther();
+  renderCookPicks(); renderTexturePicks(); renderFlavorPicks(); };
+window.pickFlavor = f=>{
+  if(f==="Other"){
+    flavorOtherOpen = true;
+    draft.flavor = draft.flavor && !FLAVORS.slice(0,-1).includes(draft.flavor) && draft.flavor!=="None" ? draft.flavor : "";
+    document.getElementById("flavorOther").style.display = "";
+    document.getElementById("flavorOther").focus();
+  } else {
+    flavorOtherOpen = false;
+    document.getElementById("flavorOther").style.display = "none";
+    draft.flavor = f;
+  }
+  renderFlavorPicks();
+};
+function syncFlavorOther(){
+  const isOther = draft.flavor && draft.flavor!=="None" && !FLAVORS.slice(0,-1).includes(draft.flavor);
+  flavorOtherOpen = isOther;
+  document.getElementById("flavorOther").style.display = isOther ? "" : "none";
+  if(isOther) document.getElementById("flavorOther").value = draft.flavor;
+}
+document.getElementById("flavorOther").addEventListener("input", e=>{ draft.flavor = e.target.value; });
+function renderReactionPicks(){
+  document.getElementById("reactionPicks").innerHTML = REACTIONS.map(r=>
+    `<button type="button" class="pick r ${draft.reactions.includes(r)?"on":""}" onclick="toggleMealReaction('${r}')">${r}</button>`
+  ).join("");
+}
+window.toggleMealReaction = r=>{
+  const i = draft.reactions.indexOf(r);
+  if(i>=0) draft.reactions.splice(i,1); else draft.reactions.push(r);
+  renderReactionPicks();
+};
+function renderMealPhoto(){
+  const el = document.getElementById("mealPhotoPrev");
+  el.innerHTML = draft.photo ? `<img src="${draft.photo}" alt="meal">` : (draft.emoji || "📸");
+}
+document.getElementById("mealPhotoBtn").onclick = ()=>document.getElementById("mealPhotoInput").click();
+document.getElementById("mealPhotoInput").addEventListener("change", e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const rd = new FileReader();
+  rd.onload = ()=>{ draft.photo = rd.result; mealEmojiOpen = false;
+    document.getElementById("mealEmojiPicks").style.display = "none"; renderMealPhoto(); };
+  rd.readAsDataURL(file);
+  e.target.value = "";
+});
+document.getElementById("mealEmojiBtn").onclick = ()=>{
+  mealEmojiOpen = !mealEmojiOpen;
+  const box = document.getElementById("mealEmojiPicks");
+  box.style.display = mealEmojiOpen ? "flex" : "none";
+  box.innerHTML = MEAL_EMOJIS.map(em=>
+    `<button type="button" class="pick ${!draft.photo && draft.emoji===em?"on":""}" onclick="setMealEmoji('${em}')">${em}</button>`).join("");
+};
+window.setMealEmoji = em=>{ draft.emoji = em; draft.photo = null; renderMealPhoto(); };
+
+document.getElementById("fabBtn").onclick = ()=>openMealModal(null);
+document.getElementById("mealSave").onclick = ()=>{
+  if(!draft.foods.length){ alert(lang==="ms"?"Pilih sekurang-kurangnya satu makanan!":"Please pick at least one food!"); return; }
+  draft.date = document.getElementById("mealDate").value || todayStr();
+  draft.time = document.getElementById("mealTime").value || defaultTime();
+  draft.notes = document.getElementById("mealNotes").value.trim();
+  const fo = document.getElementById("flavorOther").value.trim();
+  if(draft.flavor==="Other" || (draft.flavor==="" && fo)) draft.flavor = fo || "Other";
+  if(!draft.flavor) draft.flavor = "None";
+  if(editingIdx!=null) meals[editingIdx]=draft; else meals.push(draft);
+  closeModal("mealModal");
+  renderAll();
+};
+window.deleteMeal = i=>{ meals.splice(i,1); renderAll(); };
+
+// modal helpers
+function openModal(id){ document.getElementById(id).classList.add("open"); }
+function closeModal(id){ document.getElementById(id).classList.remove("open"); }
+document.querySelectorAll(".modal-back").forEach(mb=>{
+  mb.addEventListener("click", e=>{ if(e.target===mb) mb.classList.remove("open"); });
+});
+document.querySelectorAll("[data-close]").forEach(b=>{
+  b.addEventListener("click", ()=>closeModal(b.dataset.close));
+});
+
+// ================= tabs =================
+function showTab(name){
+  document.querySelectorAll(".tab-page").forEach(p=>p.classList.remove("show"));
+  document.getElementById("page-"+name).classList.add("show");
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on", b.dataset.tab===name));
+  document.getElementById("fabBtn").style.display = name==="log" ? "" : "none";
+  renderAll();
+}
+document.getElementById("nav").addEventListener("click", e=>{
+  const b = e.target.closest("button[data-tab]");
+  if(b) showTab(b.dataset.tab);
+});
+
+// ================= init =================
+function renderAll(){ renderAvatar(); renderLog(); renderWeek(); renderFoods(); renderRecipes(); renderGrocery(); renderMore(); }
+applyI18n();
+applyTheme();
+renderAll();
+showTab("log");
+</script>
+</body>
+</html>
